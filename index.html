@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+
+        <title>My calorie list</title>
+        <meta name="description" content="You can manage your calorie consumption with this tool">
+        <meta name="author" content="Laszlo Terray">
+
+        <!-- JQuery - Latest compiled and minified JavaScript -->
+        <script
+            src="https://code.jquery.com/jquery-3.2.1.min.js"
+            integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+        crossorigin="anonymous"></script>
+
+        <!-- Bootstrap - Latest compiled and minified CSS -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+        <!-- Bootstrap - Optional theme -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+
+        <!-- Bootstrap - Latest compiled and minified JavaScript -->
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
+        <!-- JsRender for templating -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jsrender/0.9.84/jsrender.js"></script>
+
+        <!-- Code of calorie list -->
+        <script src="client_api.js"></script>
+        <script src="client.js"></script>
+    </head>
+
+    <body>
+
+        <div class="page-header">
+            <h1>My calorie list <small>You can manage your calorie consumption with this tool</small></h1>
+        </div>
+        <div id="calorie-list-options">
+            <form>
+                <div class="form-group">
+                    <label for="daily-limit">Daily limit:</label>
+                    <input type="number" class="form-control" id="daily-limit" aria-describedby="Daily limit" value="">
+                    <small id="limitHelp" class="form-text text-muted">When you change your daily limit it is automatically saved</small>
+                </div>
+            </form>
+        </div>
+        <div class="group-actions panel">
+            <a class="btn btn-primary btn-create"><span class="glyphicon glyphicon-floppy-open"></span> New entry</a>
+            <a class="btn btn-success btn-refresh"><span class="glyphicon glyphicon-repeat"></span> Refresh</a>
+        </div>
+        
+        <div id="calorie-days"></div>
+        
+        <script id="day-template" type="text/x-jsrender">
+            <div class="calorie_day panel panel-{{if aboveLimit}}danger{{else}}success{{/if}}">
+                <div class="panel-heading">
+                    <h3 class="panel-title">{{:date}} - Daily calories: {{:dailyCalories}}</h3>
+                </div>
+                <div class="panel-body entry-container"></div>
+            </div>
+        </script>
+        <script id="entry-template" class="container" type="text/x-jsrender">
+            <div class="entry row">
+                <div class="entry-id hidden" data-id="{{:id}}" />
+                <div class="entry-date hidden" data-date="{{:date}}" />
+                <div class="entry-time col-xs-3" data-time="{{:time}}">{{:time}}</div>
+                <div class="entry-text col-xs-3" data-text="{{:text}}">{{:text}}</div>
+                <div class="entry-calories col-xs-3" data-calories="{{:calories}}">{{:calories}} calories</div>
+                <div class="entry-edit col-xs-1"><a class="btn btn-primary btn-primary" data-entry-id="{{:id}}"><span class="glyphicon glyphicon-pencil"></span></a></div>
+                <div class="entry-delete col-xs-1"><a class="btn btn-primary btn-danger" data-entry-id="{{:id}}"><span class="glyphicon glyphicon-remove"></span></a></div>
+            </div>
+        </script>
+        
+        <div class="group-actions panel">
+            <a class="btn btn-primary btn-create"><span class="glyphicon glyphicon-floppy-open"></span> New entry</a>
+            <a class="btn btn-success btn-refresh"><span class="glyphicon glyphicon-repeat"></span> Refresh</a>
+        </div>
+              
+        <!-- Modal -->
+        <div class="modal fade" id="edit-modal" tabindex="-1" role="dialog" aria-labelledby="edit-modal-label">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title" id="edit-modal-label">Modal title</h4>
+                    </div>
+                    <!-- Modal body -->
+                    <div class="modal-body">
+                        <form>
+                            <input type="hidden" id="entry-id">
+                            <div class="form-group">
+                                <label for="entry-date" class="control-label">Date</label>
+                                <input type="date" class="form-control" id="entry-date" />
+                            </div>
+                            <div class="form-group">
+                                <label for="entry-time" class="control-label">Time:</label>
+                                <input type="time" class="form-control" id="entry-time" />
+                            </div>
+                            <div class="form-group">
+                                <label for="entry-text" class="control-label">Description:</label>
+                                <textarea class="form-control" id="entry-text"></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label for="entry-calories" class="control-label">Calories</label>
+                                <input type="number" class="form-control" id="entry-calories" />
+                            </div>
+                          </form>
+                    </div><!-- Modal body ends -->
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        <button id="save-entry" type="button" class="btn btn-primary">Save changes</button>
+                    </div>
+                </div>
+            </div>
+        </div><!-- Modal ends -->
+                
+    </body>
+</html>
