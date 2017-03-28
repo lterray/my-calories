@@ -15,9 +15,14 @@ function MyCalorieClient(serverUrl, callbackAfterListRefresh, dailyLimitInput,
             var self = this;
             dailyLimitInput.val(calorieListApi.getCalorieLimit())
                             .change(function() {
-                                var newLimit = $(this).val();
-                                calorieListApi.setCalorieLimit(newLimit);
-                                self.loadCalorieDays();
+                                var newLimit = parseInt($(this).val());
+                                if (newLimit && newLimit > 0) {
+                                    calorieListApi.setCalorieLimit(newLimit);
+                                    self.loadCalorieDays();
+                                } else {
+                                    $(this).val(calorieListApi.getCalorieLimit());
+                                    alert('Limit must be positive number!');
+                                }
                             });
         },
         showCalorieDays: function (entries) {
@@ -129,14 +134,17 @@ $(document).ready(function () {
     $('#save-entry').click(function(){
         // saves entry
         var modalForm = $('#edit-modal form');
-        calorieList.saveEntry(
-            modalForm.find('#entry-id').val(),
-            modalForm.find('#entry-date').val(),
-            modalForm.find('#entry-time').val(),
-            modalForm.find('#entry-text').val(),
-            modalForm.find('#entry-calories').val()
-        );
-        $('#edit-modal').modal('hide');
+        var id = modalForm.find('#entry-id').val();
+        var date = modalForm.find('#entry-date').val();
+        var time = modalForm.find('#entry-time').val();
+        var text = modalForm.find('#entry-text').val();
+        var calories = modalForm.find('#entry-calories').val();
+        if (date !== '' && time !== '' && text !== '' && calories !== '') {
+            calorieList.saveEntry(id, date, time, text, calories);
+            $('#edit-modal').modal('hide');
+        } else {
+            alert("Please fill all fields before save!");
+        }
     });
     
     $('#edit-modal').on('hidden.bs.modal', function () {
