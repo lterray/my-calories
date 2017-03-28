@@ -24,6 +24,10 @@ Possible actions:
   - you can refresh the list with the 'Refresh' button
   - Next to the entries you can find the red 'Delete' button and the blue 'Edit' button. Clicking the Edit one will show a popup where you can change the data of the entry and save it afterwards
 
+### Dependencies
+Some files uses others from the repository (like client.js expects to have the client_api.js in use).
+Additionally jQuery, Bootstrap and JsRender files are used also. They are listed in the Head section of the Html code.
+
 ### Structural explanation
 The code is separated into four layers:
 
@@ -44,4 +48,4 @@ It gets the dom elements and selectors as the other parameters so you can change
 
 4. [index.html](index.html)
 This page is a working example of an interface where you can create and delete existing entries, you can create new entry and change the daily limit which you don't want to exceed.
-If you create a different interface then you should change the ready function at the bottom of the [client.js](client.js) file with it.
+If you create a different interface then you should change the ready function at the bottom of the [client.js](client.js) file with it. If you change the Html code you should keep the dependencies which are used in the Head section.
